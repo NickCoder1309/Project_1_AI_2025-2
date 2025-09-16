@@ -1,4 +1,5 @@
 from objects import Node, Matrix, Queue
+from aux_functions import reconstruct_path
 
 #Function to find possible solutions
 def find_solutions(initial_pos, map):
@@ -44,15 +45,5 @@ def find_solutions(initial_pos, map):
                     continue
             #Check if the new position is not a wall
             if matrix.get_number((x,y)) != 1:
-                new_node = Node((x,y), node, list(node.get_visited_samples()), found_sample, node.get_samples(), node.get_gasoline())
+                new_node = Node((x,y), node, list(node.get_visited_samples()), found_sample, node.get_samples(), node.get_acum_cost(), node.get_gasoline())
                 queue.enQueue(new_node)
-
-#Function to reconstruct the path from the initial position to the final position
-def reconstruct_path(final_node):
-    path = []
-    current_node = final_node
-    while current_node is not None:
-        path.append(current_node.get_position())
-        current_node = current_node.get_parent()
-    path.reverse()
-    return path

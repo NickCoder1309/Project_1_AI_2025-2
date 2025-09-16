@@ -26,7 +26,7 @@ class Matrix:
 
     def change_pos(self, position, number):
         i,j = position
-        self.map[i][j] = number 
+        self.map[i][j] = number
 
     def get_max_x(self):
         return len(self.map)
@@ -52,31 +52,39 @@ class Queue:
 
     def is_empty(self):
         return len(self.queue) == 0
-    
+
     def size(self):
         return len(self.queue)
 
 #Class for the Nodes
 class Node:
-    def __init__(self,position,parent=None,visited_samples=None,found_sample=False,samples=0,gasoline=0):
+    def __init__(self,position,parent=None,visited_samples=None,found_sample=False,samples=0,acum_cost=0,gasoline=0, found_spaceship=False):
         self.position = position
         self.parent = parent
         self.visited_samples = visited_samples if visited_samples is not None else []
         self.found_sample = found_sample
         self.samples = samples
+        self.acum_cost = acum_cost
         self.gasoline = gasoline
+        self.found_spaceship = found_spaceship
+
+    def __lt__(self, other):
+        return self.acum_cost < other.acum_cost
+
+    def get_acum_cost(self):
+        return self.acum_cost
+
+    def add_cost(self,cost):
+        self.acum_cost += cost
 
     def get_samples(self):
         return self.samples
-
-    def get_gasoline(self):
-        return self.gasoline
 
     def get_position(self):
         return self.position
 
     def get_parent(self):
-        return self.parent  
+        return self.parent
 
     def add_sample(self):
         self.samples += 1
@@ -86,12 +94,18 @@ class Node:
 
     def get_visited_samples(self):
         return self.visited_samples
-    
+
     def add_visited_sample(self, position):
         self.visited_samples.append(position)
-    
+
     def is_sample_found(self):
         return self.found_sample
+
+    def is_spaceship_found(self):
+        return self.found_spaceship
+
+    def set_spaceship_found(self, found):
+        self.found_spaceship = True
 
     def is_collected(self, position):
         if (self.visited_samples):
@@ -100,3 +114,6 @@ class Node:
                     return True
             return False
         return False
+
+    def get_gasoline(self):
+        return self.gasoline
