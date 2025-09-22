@@ -1,6 +1,6 @@
-#Class for the map
+# Class for the map
 class Matrix:
-    def __init__(self,map):
+    def __init__(self, map):
         self.map = map
 
     def is_there(self, number):
@@ -11,21 +11,21 @@ class Matrix:
         return False
 
     def get_number(self, position):
-        i,j = position
+        i, j = position
         return self.map[i][j]
 
     def get_position(self, number):
         for i in range(len(self.map)):
             for j in range(len(self.map[i])):
                 if self.map[i][j] == number:
-                    return (i,j)
+                    return (i, j)
         return None
 
     def get_map(self):
         return self.map
 
     def change_pos(self, position, number):
-        i,j = position
+        i, j = position
         self.map[i][j] = number
 
     def get_max_x(self):
@@ -35,15 +35,13 @@ class Matrix:
         return len(self.map[0])
 
 
-
-
-#Class for the Queus
+# Class for the Queus
 class Queue:
     def __init__(self):
         self.queue = []
 
-    def enQueue(self,item):
-        self.queue.insert(0,item)
+    def enQueue(self, item):
+        self.queue.insert(0, item)
 
     def deQueue(self):
         if not self.queue:
@@ -56,9 +54,20 @@ class Queue:
     def size(self):
         return len(self.queue)
 
-#Class for the Nodes
+
+# Class for the Nodes
 class Node:
-    def __init__(self,position,parent=None,visited_samples=None,found_sample=False,samples=0,acum_cost=0,gasoline=0, found_spaceship=False):
+    def __init__(
+        self,
+        position,
+        parent=None,
+        visited_samples=None,
+        found_sample=False,
+        samples=0,
+        acum_cost=0,
+        gasoline=0,
+        found_spaceship=False,
+    ):
         self.position = position
         self.parent = parent
         self.visited_samples = visited_samples if visited_samples is not None else []
@@ -74,7 +83,7 @@ class Node:
     def get_acum_cost(self):
         return self.acum_cost
 
-    def add_cost(self,cost):
+    def add_cost(self, cost):
         self.acum_cost += cost
 
     def get_samples(self):
@@ -89,7 +98,7 @@ class Node:
     def add_sample(self):
         self.samples += 1
 
-    def add_gasoline(self,gasoline):
+    def add_gasoline(self, gasoline):
         self.gasoline += gasoline
 
     def get_visited_samples(self):
@@ -108,9 +117,9 @@ class Node:
         self.found_spaceship = True
 
     def is_collected(self, position):
-        if (self.visited_samples):
-            for i,j in self.visited_samples:
-                if (i,j) == position:
+        if self.visited_samples:
+            for i, j in self.visited_samples:
+                if (i, j) == position:
                     return True
             return False
         return False
