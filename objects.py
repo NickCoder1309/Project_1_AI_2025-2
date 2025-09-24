@@ -1,51 +1,12 @@
-#Class for the map
-class Matrix:
-    def __init__(self,map):
-        self.map = map
-
-    def is_there(self, number):
-        for i in range(len(self.map)):
-            for j in range(len(self.map[i])):
-                if self.map[i][j] == number:
-                    return True
-        return False
-
-    def get_number(self, position):
-        i,j = position
-        return self.map[i][j]
-
-    def get_position(self, number):
-        for i in range(len(self.map)):
-            for j in range(len(self.map[i])):
-                if self.map[i][j] == number:
-                    return (i,j)
-        return None
-
-    def get_map(self):
-        return self.map
-
-    def change_pos(self, position, number):
-        i,j = position
-        self.map[i][j] = number
-
-    def get_max_x(self):
-        return len(self.map)
-
-    def get_max_y(self):
-        return len(self.map[0])
-
-
-
-
 #Class for the Queus
 class Queue:
     def __init__(self):
         self.queue = []
 
-    def enQueue(self,item):
+    def en_queue(self,item):
         self.queue.insert(0,item)
 
-    def deQueue(self):
+    def de_queue(self):
         if not self.queue:
             return None
         return self.queue.pop()
