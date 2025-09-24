@@ -19,7 +19,7 @@ class Queue:
 
 #Class for the Nodes
 class Node:
-    def __init__(self,position,parent=None,visited_samples=None,found_sample=False,samples=0,acum_cost=0,gasoline=0, found_spaceship=False):
+    def __init__(self,position,parent=None,visited_samples=None,found_sample=False,samples=0,acum_cost=0,gasoline=0, found_spaceship=False, heuristics_value=0):
         self.position = position
         self.parent = parent
         self.visited_samples = visited_samples if visited_samples is not None else []
@@ -28,33 +28,19 @@ class Node:
         self.acum_cost = acum_cost
         self.gasoline = gasoline
         self.found_spaceship = found_spaceship
+        self.heuristics_value = heuristics_value
 
     def __lt__(self, other):
         return self.acum_cost < other.acum_cost
 
-    def get_acum_cost(self):
-        return self.acum_cost
-
     def add_cost(self,cost):
         self.acum_cost += cost
-
-    def get_samples(self):
-        return self.samples
-
-    def get_position(self):
-        return self.position
-
-    def get_parent(self):
-        return self.parent
 
     def add_sample(self):
         self.samples += 1
 
     def add_gasoline(self,gasoline):
         self.gasoline += gasoline
-
-    def get_visited_samples(self):
-        return self.visited_samples
 
     def add_visited_sample(self, position):
         self.visited_samples.append(position)
@@ -68,7 +54,7 @@ class Node:
     def set_spaceship_found(self, found):
         self.found_spaceship = True
 
-    def is_collected(self, position):
+    def already_collected(self, position):
         if (self.visited_samples):
             for i,j in self.visited_samples:
                 if (i,j) == position:
@@ -76,5 +62,5 @@ class Node:
             return False
         return False
 
-    def get_gasoline(self):
-        return self.gasoline
+    def get_f_value(self):
+        return self.acum_cost + self.heuristics_value
