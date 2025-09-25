@@ -54,6 +54,9 @@ class Node:
     def __lt__(self, other):
         return self.acum_cost < other.acum_cost
 
+    def get_acum_cost(self):
+        return self.acum_cost
+
     def add_cost(self, cost):
         self.acum_cost += cost
 

@@ -1,4 +1,4 @@
-#Importing Search algorithm
+# Importing Search algorithm
 from first_algorithm import find_solutions
 from second_algorithm import find_solutions_2
 
@@ -17,9 +17,12 @@ def load_map(filename):
 
     return matrix, start_pos
 
+
 map, start_pos = load_map("tests/Prueba1.txt")
 
-numero_algoritmo = input("Selecciona un algoritmo: \n 1. Búsqueda No Informada Preferente por Amplitud \n 2. Búsqueda No Informada de Costo Uniforme \n 1 o 2 -> " )
+numero_algoritmo = input(
+    "Selecciona un algoritmo: \n 1. Búsqueda No Informada Preferente por Amplitud \n 2. Búsqueda No Informada de Costo Uniforme \n 1 o 2 -> "
+)
 if numero_algoritmo == "1":
     solution_node = find_solutions(start_pos, map)
     print("Solution Path:", solution_node)
