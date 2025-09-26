@@ -1,31 +1,38 @@
 # Importing Search algorithm
 from first_algorithm import find_solutions
 from second_algorithm import find_solutions_2
+from a_star_search import a_star_search
+from objects import Problem
 
 
 def load_map(filename):
-    matrix = []
-    start_pos = None
+    map = []
+    samples = []
+    initial = None
 
     with open(filename, "r") as f:
         for i, line in enumerate(f):
             row = list(map(int, line.strip().split()))
-            matrix.append(row)
+            map.append(row)
             for j, value in enumerate(row):
-                if value == 2:  # posición inicial
-                    start_pos = (i, j)
+                if value == 2:
+                    initial = (i, j)
 
-    return matrix, start_pos
+                if value == 6:
+                    samples.append((i, j))
+
+    return map, samples, initial
 
 
-map, start_pos = load_map("tests/Prueba1.txt")
+map, samples, initial = load_map("tests/Prueba1.txt")
+problem = Problem(map, samples, initial)
 
 numero_algoritmo = input(
-    "Selecciona un algoritmo: \n 1. Búsqueda No Informada Preferente por Amplitud \n 2. Búsqueda No Informada de Costo Uniforme \n 1 o 2 -> "
+    "Selecciona un algoritmo: \n 1. Búsqueda No Informada Preferente por Amplitud \n 2. Búsqueda No Informada de Costo Uniforme \n 3. Búsqueda No Informada de Costo Uniformen 1 o 2 -> "
 )
 if numero_algoritmo == "1":
-    solution_node = find_solutions(start_pos, map)
-    print("Solution Path:", solution_node)
-else:
-    solution_node = find_solutions_2(start_pos, map)
-    print("Solution Path:", solution_node)
+    solution_node = breadth_first_search(problem)
+elif option == "2":
+    solution_node = uniform_cost_search(problem)
+elif option == "3":
+    solution_node = a_star_search(problem)

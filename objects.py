@@ -1,6 +1,44 @@
 from enum import Enum
 
 
+class Problem:
+    def __init__(self, map, samples, initial):
+        self.map = map
+        self.samples = samples
+        self.initial = initial
+        self.frontier = []
+        self.reached = set()
+
+    def check_state(self, node):
+        x, y = node.position
+
+        terrain = Terrain(self.map[x][y])
+
+        is_goal = False
+
+        if terrain == Terrain.SAMPLE:
+            if node.already_collected((x, y)):
+                pass
+            else:
+                self.reset_reached()
+                node.add_sample((x, y))
+        elif terrain == Terrain.SPACESHIP:
+            if node.is_spaceship_found():
+                pass
+            else:
+                self.reset_reached()
+                node.add_gasoline(20)
+                node.set_spaceship_found(True)
+
+        if node.samples == 3:
+            is_goal = True
+
+        return is_goal
+
+    def reset_reached(self):
+        self.reached = set()
+
+
 class Terrain(Enum):
     FREE = 0
     WALL = 1
@@ -37,48 +75,21 @@ class Node:
         self,
         position,
         parent=None,
-        visited_samples=None,
-        samples=0,
-        acum_cost=0,
+        samples=None,
+        path_cost=0,
         gasoline=0,
-        heuristic_value=0,
     ):
         self.position = position
         self.parent = parent
-        self.visited_samples = visited_samples if visited_samples is not None else []
         self.samples = samples
-        self.acum_cost = acum_cost
+        self.path_cost = path_cost
         self.gasoline = gasoline
-        self.heuristic_value = heuristic_value
 
-    def __lt__(self, other):
-        return self.acum_cost < other.acum_cost
+    def add_sample(self, sample):
+        self.samples.append(sample)
 
-    def get_acum_cost(self):
-        return self.acum_cost
+    def is_already_collected(self, sample):
+        if sample in self.samples:
+            return True
 
-    def add_cost(self, cost):
-        self.acum_cost += cost
-
-    def add_sample(self):
-        self.samples += 1
-
-    def add_gasoline(self, gasoline):
-        self.gasoline += gasoline
-
-    def add_visited_sample(self, position):
-        self.visited_samples.append(position)
-
-    def set_heuristic_value(self, heuristic_value):
-        self.heuristic_value = heuristic_value
-
-    def already_collected(self, position):
-        if self.visited_samples:
-            for i, j in self.visited_samples:
-                if (i, j) == position:
-                    return True
-            return False
         return False
-
-    def get_f_value(self):
-        return self.acum_cost + self.heuristic_value

@@ -3,51 +3,40 @@ from aux_functions import reconstruct_path
 import heapq
 
 
-def heuristic_function(pos, valid_samples):
+def heuristic_function(node):
+    x2, y2 = node.position
+
     mht_distances = []
 
-    for x, y in valid_samples:
-        h = abs(pos[0] - x) + abs(pos[1] - y)
+    for sample_position in node.samples:
+        x1, y1 = sample_position
+
+        h = abs(x2 - x1) + abs(y2 - y1)
 
         mht_distances.append(h)
 
     return min(mht_distances)
 
 
-def a_star_search(initial_pos, map, samples):
-    node = Node(initial_pos)
-    frontier = []
-    reached = set()
+def a_star_search(problem):
+    node = Node(problem.initial)
+    frontier = problem.frontier
+    reached = problem.reached
 
     heapq.heappush(frontier, (0, node))
 
-    while priorityQueue:
-        _, node = heapq.heappop(priorityQueue)
+    while frontier:
+        _, node = heapq.heappop(frontier)
 
-        i, j = node.position
-
-        if node.samples == 3:
+        is_goal = problem.check_state(node)
+        if is_goal:
             return node
 
-        if map[i][j] == 6:
-            if node.already_collected((i, j)):
-                pass
-            else:
-                node.add_sample()
-                found_sample = True
-                node.add_visited_sample((i, j))
-
-        if map[i][j] == 5:
-            if node.is_spaceship_found():
-                pass
-            else:
-                node.add_gasoline(20)
-                node.set_spaceship_found(True)
-
-        for child in expand_node(node, map, samples):
+        for child in expand_node(node, problem):
             if child not in reached:
+                f_value = child.path_cost + heuristic_function(child)
                 reached.add(child)
-                heapq.heappush(frontier, (child.get_f_value, child))
+                heapq.heappush(frontier, (f_value, child))
 
 
 def is_in_map_bounds(position):
@@ -59,16 +48,14 @@ def is_in_map_bounds(position):
     return True
 
 
-def expand_node(node, map, samples):
+def expand_node(node, problem):
     i, j = node.position
 
     for x, y in [(i, j - 1), (i - 1, j), (i + 1, j), (i, j + 1)]:
         if not is_in_map_bounds((x, y)):
             continue
 
-        terrain = Terrain(map[x][y])
-
-        terrain = Terrain(map[x][y])
+        terrain = Terrain(problem.map[x][y])
 
         if terrain in (
             Terrain.FREE,
@@ -91,16 +78,12 @@ def expand_node(node, map, samples):
             gasoline_spent = 1
             cost /= 2
 
-        heuristic_value = heuristic_function((x, y), samples)
-
         new_node = Node(
             (x, y),
             node,
-            list(node.visited_samples),
             node.samples,
             node.acum_cost + cost,
             node.gasoline - gasoline_spent,
-            heuristic_value,
         )
 
         yield new_node
