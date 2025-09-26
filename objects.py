@@ -20,22 +20,17 @@ class Problem:
             if node.is_already_collected((x, y)):
                 pass
             else:
-                self.reset_reached()
                 node.collect_sample((x, y))
         elif terrain == Terrain.SPACESHIP:
             if node.is_spaceship_found:
                 pass
             else:
-                self.reset_reached()
                 node.spaceship_found()
 
         if not node.avaible_samples:
             is_goal = True
 
         return is_goal
-
-    def reset_reached(self):
-        self.reached = {}
 
 
 class Terrain(Enum):
@@ -102,7 +97,7 @@ class Node:
     def get_state(self):
         return (
             self.position,
-            tuple(sorted(self.avaible_samples)),
+            frozenset(self.avaible_samples),
             self.is_spaceship_found,
             self.gasoline,
         )

@@ -29,5 +29,6 @@ grid, samples, initial = load_grid("tests/Prueba1.txt")
 problem = Problem(grid, samples, initial)
 
 solution_node = a_star_search(problem)
-
+print(solution_node.path_cost)
+print(solution_node.is_spaceship_found)
 print(reconstruct_path(solution_node))
