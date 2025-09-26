@@ -7,7 +7,7 @@ class Problem:
         self.samples = samples
         self.initial = initial
         self.frontier = []
-        self.reached = set()
+        self.reached = {}
 
     def check_state(self, node):
         x, y = node.position
@@ -36,7 +36,7 @@ class Problem:
         return is_goal
 
     def reset_reached(self):
-        self.reached = set()
+        self.reached = {}
 
 
 class Terrain(Enum):
@@ -98,3 +98,11 @@ class Node:
 
     def spaceship_found(self):
         self.is_spaceship_found = True
+
+    def get_state(self):
+        return (
+            self.position,
+            tuple(sorted(self.avaible_samples)),
+            self.is_spaceship_found,
+            self.gasoline,
+        )

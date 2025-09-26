@@ -33,9 +33,12 @@ def a_star_search(problem):
             return node
 
         for child in expand_node(node, problem):
-            if child not in reached:
+            if (
+                child.get_state() not in reached
+                or child.path_cost < reached[child.get_state()].path_cost
+            ):
                 f_value = child.path_cost + heuristic_function(child)
-                reached.add(child)
+                reached[child.get_state()] = child
                 heapq.heappush(frontier, (f_value, random.random(), child))
 
 
