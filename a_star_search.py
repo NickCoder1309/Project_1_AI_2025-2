@@ -15,7 +15,7 @@ def heuristic_function(node):
 
         mht_distances.append(h)
 
-    return min(mht_distances)
+    return min(mht_distances) + 20 - node.gasoline
 
 
 def a_star_search(problem):
