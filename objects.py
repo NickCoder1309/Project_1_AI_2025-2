@@ -1,10 +1,61 @@
-#Class for the Queus
+from enum import Enum
+
+
+class Problem:
+    def __init__(self, grid, samples, initial):
+        self.grid = grid
+        self.samples = samples
+        self.initial = initial
+        self.frontier = []
+        self.reached = set()
+
+    def check_state(self, node):
+        x, y = node.position
+
+        terrain = Terrain(self.grid[x][y])
+
+        is_goal = False
+
+        if terrain == Terrain.SAMPLE:
+            if node.is_already_collected((x, y)):
+                pass
+            else:
+                self.reset_reached()
+                node.collect_sample((x, y))
+        elif terrain == Terrain.SPACESHIP:
+            if node.is_spaceship_found():
+                pass
+            else:
+                self.reset_reached()
+                node.add_gasoline(20)
+                node.spaceship_found()
+
+        if not node.avaible_samples:
+            is_goal = True
+
+        return is_goal
+
+    def reset_reached(self):
+        self.reached = set()
+
+
+class Terrain(Enum):
+    FREE = 0
+    WALL = 1
+    ASTRONAUT = 2
+    ROCKY = 3
+    VOLCANIC = 4
+    SPACESHIP = 5
+    SAMPLE = 6
+
+
+# Class for the Queus
 class Queue:
     def __init__(self):
         self.queue = []
 
-    def en_queue(self,item):
-        self.queue.insert(0,item)
+    def en_queue(self, item):
+        self.queue.insert(0, item)
 
     def de_queue(self):
         if not self.queue:
@@ -17,50 +68,33 @@ class Queue:
     def size(self):
         return len(self.queue)
 
-#Class for the Nodes
+
+# Class for the Nodes
 class Node:
-    def __init__(self,position,parent=None,visited_samples=None,found_sample=False,samples=0,acum_cost=0,gasoline=0, found_spaceship=False, heuristics_value=0):
+    def __init__(
+        self,
+        position,
+        parent=None,
+        avaible_samples=None,
+        path_cost=0,
+        gasoline=0,
+        is_spaceship_found=False,
+    ):
         self.position = position
         self.parent = parent
-        self.visited_samples = visited_samples if visited_samples is not None else []
-        self.found_sample = found_sample
-        self.samples = samples
-        self.acum_cost = acum_cost
+        self.avaible_samples = avaible_samples
+        self.path_cost = path_cost
         self.gasoline = gasoline
-        self.found_spaceship = found_spaceship
-        self.heuristics_value = heuristics_value
+        self.is_spaceship_found = is_spaceship_found
 
-    def __lt__(self, other):
-        return self.acum_cost < other.acum_cost
+    def collect_sample(self, sample):
+        self.avaible_samples.remove(sample)
 
-    def add_cost(self,cost):
-        self.acum_cost += cost
-
-    def add_sample(self):
-        self.samples += 1
-
-    def add_gasoline(self,gasoline):
-        self.gasoline += gasoline
-
-    def add_visited_sample(self, position):
-        self.visited_samples.append(position)
-
-    def is_sample_found(self):
-        return self.found_sample
-
-    def is_spaceship_found(self):
-        return self.found_spaceship
-
-    def set_spaceship_found(self, found):
-        self.found_spaceship = True
-
-    def already_collected(self, position):
-        if (self.visited_samples):
-            for i,j in self.visited_samples:
-                if (i,j) == position:
-                    return True
+    def is_already_collected(self, sample):
+        if sample in self.avaible_samples:
             return False
-        return False
 
-    def get_f_value(self):
-        return self.acum_cost + self.heuristics_value
+        return True
+
+    def spaceship_found(self):
+        self.is_spaceship_found = True
