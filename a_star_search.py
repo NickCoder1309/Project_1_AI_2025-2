@@ -19,7 +19,7 @@ def heuristic_function(node):
 
 
 def a_star_search(problem):
-    node = Node(problem.initial, avaible_samples=problem.samples)
+    node = Node(problem.initial, avaible_samples=list(problem.samples))
     frontier = problem.frontier
     reached = problem.reached
 
@@ -84,7 +84,7 @@ def expand_node(node, problem):
         new_node = Node(
             (x, y),
             node,
-            node.avaible_samples,
+            list(node.avaible_samples),
             node.path_cost + cost,
             node.gasoline - gasoline_spent,
         )
