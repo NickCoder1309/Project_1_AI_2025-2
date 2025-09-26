@@ -23,11 +23,10 @@ class Problem:
                 self.reset_reached()
                 node.collect_sample((x, y))
         elif terrain == Terrain.SPACESHIP:
-            if node.is_spaceship_found():
+            if node.is_spaceship_found:
                 pass
             else:
                 self.reset_reached()
-                node.add_gasoline(20)
                 node.spaceship_found()
 
         if not node.avaible_samples:
@@ -98,6 +97,7 @@ class Node:
 
     def spaceship_found(self):
         self.is_spaceship_found = True
+        self.gasoline = 20
 
     def get_state(self):
         return (
