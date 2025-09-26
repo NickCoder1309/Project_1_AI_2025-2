@@ -1,6 +1,6 @@
 from objects import Node, Terrain
 from aux_functions import reconstruct_path
-import heapq
+import heapq, random
 
 
 def heuristic_function(node):
@@ -8,7 +8,7 @@ def heuristic_function(node):
 
     mht_distances = []
 
-    for sample_position in node.samples:
+    for sample_position in node.avaible_samples:
         x1, y1 = sample_position
 
         h = abs(x2 - x1) + abs(y2 - y1)
@@ -19,14 +19,14 @@ def heuristic_function(node):
 
 
 def a_star_search(problem):
-    node = Node(problem.initial)
+    node = Node(problem.initial, avaible_samples=problem.samples)
     frontier = problem.frontier
     reached = problem.reached
 
-    heapq.heappush(frontier, (0, node))
+    heapq.heappush(frontier, (0, random.random(), node))
 
     while frontier:
-        _, node = heapq.heappop(frontier)
+        _, _, node = heapq.heappop(frontier)
 
         is_goal = problem.check_state(node)
         if is_goal:
@@ -36,10 +36,10 @@ def a_star_search(problem):
             if child not in reached:
                 f_value = child.path_cost + heuristic_function(child)
                 reached.add(child)
-                heapq.heappush(frontier, (f_value, child))
+                heapq.heappush(frontier, (f_value, random.random(), child))
 
 
-def is_in_map_bounds(position):
+def is_in_grid_bounds(position):
     x, y = position
 
     if x < 0 or x > 9 or y < 0 or y > 9:
@@ -52,10 +52,10 @@ def expand_node(node, problem):
     i, j = node.position
 
     for x, y in [(i, j - 1), (i - 1, j), (i + 1, j), (i, j + 1)]:
-        if not is_in_map_bounds((x, y)):
+        if not is_in_grid_bounds((x, y)):
             continue
 
-        terrain = Terrain(problem.map[x][y])
+        terrain = Terrain(problem.grid[x][y])
 
         if terrain in (
             Terrain.FREE,
@@ -81,8 +81,8 @@ def expand_node(node, problem):
         new_node = Node(
             (x, y),
             node,
-            node.samples,
-            node.acum_cost + cost,
+            node.avaible_samples,
+            node.path_cost + cost,
             node.gasoline - gasoline_spent,
         )
 

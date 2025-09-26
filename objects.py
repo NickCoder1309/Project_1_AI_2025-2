@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class Problem:
-    def __init__(self, map, samples, initial):
-        self.map = map
+    def __init__(self, grid, samples, initial):
+        self.grid = grid
         self.samples = samples
         self.initial = initial
         self.frontier = []
@@ -12,25 +12,25 @@ class Problem:
     def check_state(self, node):
         x, y = node.position
 
-        terrain = Terrain(self.map[x][y])
+        terrain = Terrain(self.grid[x][y])
 
         is_goal = False
 
         if terrain == Terrain.SAMPLE:
-            if node.already_collected((x, y)):
+            if node.is_already_collected((x, y)):
                 pass
             else:
                 self.reset_reached()
-                node.add_sample((x, y))
+                node.collect_sample((x, y))
         elif terrain == Terrain.SPACESHIP:
             if node.is_spaceship_found():
                 pass
             else:
                 self.reset_reached()
                 node.add_gasoline(20)
-                node.set_spaceship_found(True)
+                node.spaceship_found()
 
-        if node.samples == 3:
+        if not node.avaible_samples:
             is_goal = True
 
         return is_goal
@@ -75,21 +75,26 @@ class Node:
         self,
         position,
         parent=None,
-        samples=None,
+        avaible_samples=None,
         path_cost=0,
         gasoline=0,
+        is_spaceship_found=False,
     ):
         self.position = position
         self.parent = parent
-        self.samples = samples
+        self.avaible_samples = avaible_samples
         self.path_cost = path_cost
         self.gasoline = gasoline
+        self.is_spaceship_found = is_spaceship_found
 
-    def add_sample(self, sample):
-        self.samples.append(sample)
+    def collect_sample(self, sample):
+        self.avaible_samples.remove(sample)
 
     def is_already_collected(self, sample):
-        if sample in self.samples:
-            return True
+        if sample in self.avaible_samples:
+            return False
 
-        return False
+        return True
+
+    def spaceship_found(self):
+        self.is_spaceship_found = True
