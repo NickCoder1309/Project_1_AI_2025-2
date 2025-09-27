@@ -1,6 +1,6 @@
 # Importing Search algorithm
-from first_algorithm import breadth_first_search
-from second_algorithm import uniform_cost_search
+from breadth_first_search import breadth_first_search
+from uniform_cost_search import uniform_cost_search
 from a_star_search import a_star_search
 from aux_functions import reconstruct_path
 from objects import Problem, Terrain
