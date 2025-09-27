@@ -1,9 +1,9 @@
 # Importing Search algorithm
-from first_algorithm import find_solutions
+from first_algorithm import breadth_first_search
 from second_algorithm import find_solutions_2
 from a_star_search import a_star_search
 from aux_functions import reconstruct_path
-from objects import Problem
+from objects import Problem, Terrain
 
 
 def load_grid(filename):
