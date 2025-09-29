@@ -18,6 +18,5 @@ def depth_first_search(problem):
 
         for child in expand_node(node, problem):
             if child.get_state() not in reached:
-                f_value = child.path_cost
                 reached[child.get_state()] = child
                 frontier.append(child)
