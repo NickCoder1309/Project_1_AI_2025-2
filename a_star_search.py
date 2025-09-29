@@ -1,5 +1,5 @@
 from objects import Node, Terrain
-from aux_functions import is_in_grid_bounds, expand_node
+from aux_functions import expand_node
 import heapq, random
 
 

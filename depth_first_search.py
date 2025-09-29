@@ -1,16 +1,16 @@
-from objects import Node, Queue, Terrain, Problem
+from objects import Node, Queue, Problem, Terrain
 from aux_functions import expand_node
 
 
-# Function to find possible solutions
-def breadth_first_search(problem):
+def depth_first_search(problem):
     node = Node(problem.initial, avaible_samples=list(problem.samples))
-    frontier = Queue()
+    frontier = problem.frontier
     reached = problem.reached
 
-    frontier.en_queue(node)
+    frontier.append(node)
+
     while frontier:
-        node = frontier.de_queue()
+        node = frontier.pop()
 
         is_goal = problem.check_state(node)
         if is_goal:
@@ -18,5 +18,6 @@ def breadth_first_search(problem):
 
         for child in expand_node(node, problem):
             if child.get_state() not in reached:
+                f_value = child.path_cost
                 reached[child.get_state()] = child
-                frontier.en_queue(child)
+                frontier.append(child)
