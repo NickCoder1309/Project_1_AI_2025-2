@@ -1,5 +1,4 @@
 from objects import Node, Terrain
-from aux_functions import reconstruct_path
 import heapq, random
 
 
@@ -15,7 +14,7 @@ def heuristic_function(node):
 
         mht_distances.append(h)
 
-    return min(mht_distances) + 20 - node.gasoline
+    return sum(mht_distances)
 
 
 def a_star_search(problem):
@@ -87,6 +86,7 @@ def expand_node(node, problem):
             list(node.avaible_samples),
             node.path_cost + cost,
             node.gasoline - gasoline_spent,
+            node.is_spaceship_found,
         )
 
         yield new_node

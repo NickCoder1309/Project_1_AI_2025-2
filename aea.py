@@ -1,6 +1,4 @@
 # Importing Search algorithm
-from first_algorithm import find_solutions
-from second_algorithm import find_solutions_2
 from a_star_search import a_star_search
 from aux_functions import reconstruct_path
 from objects import Problem
