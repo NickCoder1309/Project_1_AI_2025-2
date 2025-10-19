@@ -3,18 +3,30 @@ import heapq, random
 
 
 def heuristic_function(node):
-    x2, y2 = node.position
+    avaible_samples = list(node.avaible_samples)
+    if not avaible_samples:
+        return 0
 
-    mht_distances = []
+    current_pos = node.position
+    total = 0
 
-    for sample_position in node.avaible_samples:
-        x1, y1 = sample_position
+    while avaible_samples:
+        nearest_sample = min(
+            avaible_samples,
+            key=lambda s: abs(current_pos[0] - s[0]) + abs(current_pos[1] - s[1]),
+        )
+        nearest_dist = abs(current_pos[0] - nearest_sample[0]) + abs(
+            current_pos[1] - nearest_sample[1]
+        )
 
-        h = abs(x2 - x1) + abs(y2 - y1)
+        total += nearest_dist
+        current_pos = nearest_sample
+        avaible_samples.remove(nearest_sample)
 
-        mht_distances.append(h)
+    if node.gasoline > 0:
+        total *= 0.5
 
-    return sum(mht_distances)
+    return total
 
 
 def a_star_search(problem):
