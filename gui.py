@@ -55,7 +55,7 @@ class SmartAstronautApp:
         self.combo_tipo.place(x=90, y=380)
         self.combo_tipo.bind("<<ComboboxSelected>>", self.mostrar_submenu)
 
-        # Segundo menú que aparece dinámicamente
+        # Menú de algoritmos
         self.label_algoritmo = tk.Label(self.root, text="Algoritmo:", font=("Arial", 10, "bold"), 
                                        bg="black", fg="white")
         self.combo_subtipo = ttk.Combobox(self.root, textvariable=self.sub_tipo_busqueda,
@@ -164,11 +164,17 @@ class SmartAstronautApp:
         
         self.dibujar_mundo(matriz)
         
-        # ---------- Solo el botón de ejecutar (centrado) ----------
+        # ----------  botón de ejecutar  ----------
         tk.Button(self.root, text="🚀 Ejecutar Búsqueda", 
                  font=("Arial", 12, "bold"), 
                  command=self.ejecutar_algoritmo,
-                 bg="black", fg="white", width=20, height=2).place(x=250, y=530)
+                 bg="black", fg="white", width=20, height=2).place(x=176, y=530)
+        
+        # Botón Reiniciar para volver a empezar desde la pantalla inicial
+        tk.Button(self.root, text="🔄 Reiniciar", 
+           font=("Arial", 12, "bold"), 
+           command=self.reiniciar_app,
+           bg="black", fg="white", width=10, height=2).place(x=420, y=530)
 
       
     
@@ -187,62 +193,81 @@ class SmartAstronautApp:
             resultado = None
             
             # Ejecutar según el algoritmo seleccionado
+            
+            import time
+
+            problem = Problem(self.world_map, self.samples, self.initial_position)
+
+            # medir tiempo de ejecución
+            start_time = time.time()
+
             if algoritmo == "Búsqueda por Amplitud":
-                resultado = breadth_first_search(self.initial_position, self.world_map)
-                
+                resultado_nodo = breadth_first_search.breadth_first_search(problem)
+
             elif algoritmo == "Costo Uniforme":
-                resultado = uniform_cost_search(self.initial_position, self.world_map)
+                resultado_nodo = uniform_cost_search.uniform_cost_search(problem)
 
             elif algoritmo == "Profundidad evitando ciclos":
-
-                resultado = depth_first_search(self.initial_position, self.world_map)
+                resultado_nodo = depth_first_search.depth_first_search(problem)
 
             elif algoritmo == "A*":
-                # Para A* necesitamos crear un objeto Problem
-                problem = Problem(self.world_map, self.samples, self.initial_position)
-                resultado_nodo = a_star_search(problem)
-                if resultado_nodo:
-                    resultado = reconstruct_path(resultado_nodo)
-                    messagebox.showinfo("Resultado A*", 
-                                      f"¡Solución encontrada!\n"
-                                      f"Pasos totales: {len(resultado)}\n"
-                                      f"Costo total: {resultado_nodo.path_cost:.2f}")
-                else:
-                    resultado = None
-                    
+                resultado_nodo = a_star_search.a_star_search(problem)
+
             elif algoritmo == "Avara":
-                resultado = greedy_best_first_search(self.initial_position, self.world_map)
-                if resultado:
-                    messagebox.showinfo("Resultado Avara", 
-                                      f"¡Solución encontrada!\n"
-                                      f"Pasos totales: {len(resultado)}")
-                else:
-                    resultado = None
-                return
-                
+                resultado_nodo = greedy_best_first_search.greedy_search(problem)
+
             else:
                 messagebox.showerror("Error", f"Algoritmo '{algoritmo}' no reconocido.")
                 return
-            
-            # Mostrar resultado
+
+            end_time = time.time()
+            elapsed = end_time - start_time
+
+            # métricas
+            expanded = len(problem.reached)
+
+            # profundidad máxima: recorrer padres para cada nodo alcanzado
+            max_depth = 0
+            for node in problem.reached.values():
+                depth = 0
+                cur = node
+                while cur.parent is not None:
+                    depth += 1
+                    cur = cur.parent
+                if depth > max_depth:
+                    max_depth = depth
+
+            # Si el algoritmo devolvió un nodo objetivo, reconstruir el camino
+            if resultado_nodo:
+                resultado = reconstruct_path(resultado_nodo)
+            else:
+                resultado = None
+
+            # costo: solo para A* y Costo Uniforme
+            costo = resultado_nodo.path_cost if (resultado_nodo and algoritmo in ("A*", "Costo Uniforme")) else 0
+
+            # mostrar un mensaje final con métricas
             if resultado:
                 self.solution_path = resultado
-                # Mostrar información detallada de la solución
-                mensaje_resultado = (f"¡Solución encontrada!\n"
-                                   f"Algoritmo: {algoritmo}\n"
-                                   f"Pasos totales: {len(resultado)}\n"
-                                   f"Muestras objetivo: {len(self.samples)}\n"
-                                   f"Posición inicial: {self.initial_position}\n"
-                                   f"Posición final: {resultado[-1] if resultado else 'N/A'}")
-                
-                if algoritmo != "A*":  # Para A* ya mostramos el mensaje arriba
-                    messagebox.showinfo("¡Éxito!", mensaje_resultado)
-                
-                # Iniciar animación del camino de la solución
+                mensaje_resultado = (
+                    f"¡Solución encontrada!\n"
+                    f"Algoritmo: {algoritmo}\n"
+                    f"Pasos totales: {len(resultado)}\n"
+                    f"Costo de la solución: {costo:.2f}\n"
+                    f"Nodos expandidos: {expanded}\n"
+                    f"Profundidad del árbol: {max_depth}\n"
+                    f"Tiempo de cómputo (s): {elapsed:.4f}"
+                )
+                messagebox.showinfo("¡Éxito!", mensaje_resultado)
                 self.dibujar_solucion()
             else:
                 messagebox.showwarning("Sin solución", 
-                                     f"No se encontró una solución con el algoritmo {algoritmo}")
+                                     f"No se encontró una solución con el algoritmo {algoritmo}\n"
+                                     f"Nodos expandidos: {expanded}\n"
+                                     f"Profundidad máxima: {max_depth}\n"
+                                     f"Tiempo (s): {elapsed:.4f}")
+            
+        
                 
         except Exception as e:
             messagebox.showerror("Error", f"Error al ejecutar el algoritmo {algoritmo}:\n{str(e)}")
@@ -254,7 +279,7 @@ class SmartAstronautApp:
         
         # Inicializar variables de animación
         self.animation_step = 0
-        self.celda = 40  # Debe coincidir con dibujar_mundo
+        self.celda = 40  
         self.usando_nave = False  # Inicializar estado de la nave
         
         # Comenzar la animación
@@ -265,8 +290,8 @@ class SmartAstronautApp:
         if self.animation_step >= len(self.solution_path):
             # Animación completada
             messagebox.showinfo("¡Completado!", 
-                              f"El astronauta completó su misión!\n"
-                              f"Pasos totales: {len(self.solution_path)}")
+                              f"El astronauta completó su misión!\n")
+                              
             return
         
         # Obtener posición actual
@@ -383,14 +408,14 @@ class SmartAstronautApp:
         self.canvas.delete("all")
         filas = 10
         columnas = 10
-        celda = 40  # Ajustado para el nuevo tamaño
+        celda = 40  
         
         # Configurar el canvas con el tamaño correcto
         canvas_width = columnas * celda
         canvas_height = filas * celda
         self.canvas.config(width=canvas_width, height=canvas_height)
 
-        # ----- Cargar imágenes una sola vez -----
+        # ----- Cargar imágenes -----
         img_size = (celda - 5, celda - 5)  # Ajustar tamaño de imágenes
         self.img_astronauta = self.cargar_imagen("img/astronauta.png", img_size)
         self.img_rocoso     = self.cargar_imagen("img/rocoso.png", img_size)
@@ -450,6 +475,17 @@ class SmartAstronautApp:
                                                  outline="black", fill="white")
                     self.canvas.create_image(x0 + celda/2, y0 + celda/2,
                                              image=self.img_muestra)
+
+    def reiniciar_app(self):
+        """Cerrar la ventana actual y crear una nueva instancia de la app para reiniciar."""
+        try:
+            # destruir la raíz actual
+            self.root.destroy()
+        except Exception:
+            pass
+
+        # Crear una nueva instancia (esto abrirá la ventana desde cero)
+        SmartAstronautApp()
 
 # ==============================
 # Ejecutar aplicación
