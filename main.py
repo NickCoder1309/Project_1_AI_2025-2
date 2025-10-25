@@ -1,4 +1,3 @@
-# Importing Search algorithm
 from a_star_search import a_star_search
 from aux_functions import reconstruct_path
 from breadth_first_search import breadth_first_search
@@ -30,7 +29,7 @@ grid, samples, initial = load_grid("tests/Prueba1.txt")
 problem = Problem(grid, samples, initial)
 
 numero_algoritmo = input(
-    "Selecciona un algoritmo: \n 1. Búsqueda No Informada Amplitud \n 2. Búsq. No Inf. Costo Uniforme \n 3. Búsq. No Inf. por Profundidad \n 4. A estrella \n 1 : 2 : 3 : 4 -> "
+    "Selecciona un algoritmo: \n 1. Búsq. Por Amplitud \n 2. Búsq. Costo Uniforme \n 3. Búsq. Por Profundidad \n 4. A* \n 1 : 2 : 3 : 4 -> "
 )
 if numero_algoritmo == "1":
     solution_node = breadth_first_search(problem)
