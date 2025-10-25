@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, ttk, messagebox
-from PIL import Image, ImageTk  # pip install pillow
+from PIL import Image, ImageTk
 
-# Importar algoritmos
 import breadth_first_search
 import depth_first_search
 import uniform_cost_search
