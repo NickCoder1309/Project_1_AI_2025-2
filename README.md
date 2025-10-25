@@ -6,35 +6,32 @@ Program that uses various search algorithms to calculate the optimal solution fo
 ## Crear un entorno virtual
 Sobre la raiz del proyecto, ejecutar:
 
+### En Linux o macOS
 ´´´bash
-# En Linux o macOS
 python3 -m venv venv
 
-# En Windows
+### En Windows
+´´´bash
 python -m venv venv
-´´´
 
 ## Activar entorno virtual
 
+### En Linux o macOS
 ´´´bash
-# En Linux o macOS
 source venv/bin/activate
 
-# En Windows CMD
+### En Windows CMD
+´´´bash
 venv\Scripts\activate.bat
 
-# En Windows PowerShell
+### En Windows PowerShell
+´´´bash
 .\venv\Scripts\Activate.ps1
-´´´
 
 ## Instalar Requerimientos
-
 ´´´bash
 pip install -r requirements.txt
-´´´
 
 ## Ejecutar Proyecto
-
 ´´´bash
 python3 main.py
-´´´
